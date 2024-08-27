@@ -44,7 +44,9 @@ void vertex()
 
 After doing this your screen should be all white-ish.
 
-| WARNING ⚠️ il metodo è cambiato da Godot 4.2 a 4.3 a causa dell'inserimento del **reverse z buffer**. Leggi quest'articolo per scoprire di più: [Introducing Reverse Z (AKA I'm sorry for breaking your shader)](https://godotengine.org/article/introducing-reverse-z/)
+> ⚠️ WARNING ⚠️ 
+> 
+> method changed from Godot 4.2 to 4.3 because of the introduction of the **reverse z buffer**. Read this article to find out more: [Introducing Reverse Z (AKA I'm sorry for breaking your shader)](https://godotengine.org/article/introducing-reverse-z/)
 
 ### Make each screen's pixel 8x8
 
