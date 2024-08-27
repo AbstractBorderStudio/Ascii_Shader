@@ -125,9 +125,21 @@ We have 8 shades!
 >
 > ![quantize_burnt](imgs/quantize_burnt.png)
 >
-> I will leave it like this.
+> I will leave it like this. So the clamp in the previus formula goes from 0 to size-1
+>
+> `return clamp(floor(value * size), 0.0, size - 1.0);`
 
 ### Map pixel to character
+
+Now. How the Duck (sorry I'm stupid) we make a pixel like an ascii character? The answer is to use a texture of the characters! So an 80x8 texture:
+
+![ascii_texture](imgs/ascii.png)
+
+I borrowed the texture from [Acerola's public repo](https://github.com/GarrettGunnell/AcerolaFX/tree/main/Textures).
+
+The idea is to map each pixel in the screen inside an 8x8 square and use the luminosity to check which character we want from the ascii texture.
+
+![schema](imgs/schema.png)
 
 ### Add color
 
