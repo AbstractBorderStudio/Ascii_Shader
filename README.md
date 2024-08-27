@@ -20,6 +20,7 @@
 
 > - AUTHOR: Daniel Bologna (me)
 > - GIT: https://github.com/AbstractBorderStudio
+> - GODOT_SHADER: https://godotshaders.com/author/dan/
 > - ENGINE: Godot 4.3
 
 ## Intro
