@@ -47,7 +47,7 @@ float _get_ascii(float index, vec2 coordinate, vec2 uv)
 	// get the coordinate of the (x, y) pixel of the texture and scale the pixel fullscreen to get the color
 	vec2 scaled_uv = uv / (vec2(_char_count, 1.0) * _char_size) 		// scale the uv so we have a single pixel from the texture
 			+ vec2(x_scale * _char_size * index, 0.0) 					// displace by moving 8 pixel at a time to reach the correct character
-			+ vec2(x_scale * coordinate.x, y_scale * coordinate.y); 	// get the (x,y) displaced position of the character
+			+ vec2(x_scale * coordinate.x, y_scale * coordinate.y); 	// get the (x,y) displaced position inside the character grid
 	
 	// return the ascii texture sampled in this new uv
 	return texture(_ascii_tex, scaled_uv).r;
@@ -90,5 +90,5 @@ void fragment()
 	
 	// add color
 	vec3 col = tex * ascii;
-	ALBEDO = col;
+	ALBEDO = vec3(ascii);// col;
 }

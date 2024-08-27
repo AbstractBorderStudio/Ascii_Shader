@@ -9,9 +9,11 @@
     - [Compute pixel luminosity](#compute-pixel-luminosity)
     - [Quantize the luminosity values to the ascii character count](#quantize-the-luminosity-values-to-the-ascii-character-count)
     - [Map pixel to character](#map-pixel-to-character)
+    - [Limit color values](#limit-color-values)
+    - [B\&W shader](#bw-shader)
     - [Add color](#add-color)
-  - [What I learnd](#what-i-learnd)
   - [Future works](#future-works)
+  - [Ending](#ending)
   - [Credits](#credits)
 
 ## Info
@@ -178,18 +180,57 @@ The way I do this is:
         // get the coordinate of the (x, y) pixel of the texture and scale the pixel fullscreen to get the color
         vec2 scaled_uv = uv / (vec2(_char_count, 1.0) * _char_size) 		// scale the uv so we have a single pixel from the texture
                 + vec2(x_scale * _char_size * index, 0.0) 					// displace by moving 8 pixel at a time to reach the correct character
-                + vec2(x_scale * coordinate.x, y_scale * coordinate.y); 	// get the (x,y) displaced position of the character
+                + vec2(x_scale * coordinate.x, y_scale * coordinate.y); 	// get the (x,y) displaced position inside the character grid
         
         // return the ascii texture sampled in this new uv
         return texture(_ascii_tex, scaled_uv).r;
     }
     ```
 
+    To more specific, I make so that a single pixel of the ascii texture fill the screen (so I get only that color), then translate the uv to get the corresponding (x,y) pixel value. 
+
+### Limit color values
+
+This way we have only black and white values, creating an effective mask.
+
+```
+// clamp the values
+ascii = (ascii > 0.1) ? 1.0 : 0.0;
+```
+
+### B&W shader
+
+Just output a vec3 with ascii for each value
+
+```
+ALBEDO = vec3(ascii);
+```
+
+![mono](imgs/mono.png)
+
 ### Add color
 
-## What I learnd
+Just multiply the downsampled texture (which mantain color info) with the ascii value just computed that will work as a mask. And we're done!
+
+```
+...
+vec3 tex = texture(_screen_texture, downsampled_uv);
+
+...
+
+ALBEDO = tex * ascii;
+```
+
+![colored](imgs/colored.png)
 
 ## Future works
+
+- I'll try to implement a edge detection filter to add a ascii outline like in Acerola's video.
+- Polish and optimization.
+
+## Ending
+
+Thank you for spending your time reading this article!
 
 ## Credits
 
