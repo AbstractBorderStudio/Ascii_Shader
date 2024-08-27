@@ -1,3 +1,9 @@
+/*
+	AUTHOR: Daniel Bologna (call me Dan)
+	GIT: https://github.com/AbstractBorderStudio
+	ENGINE_VERSION: 4.3
+*/
+
 shader_type spatial;
 render_mode unshaded;
 

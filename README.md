@@ -1,6 +1,7 @@
 # Ascii_Shader
 
 - [Ascii\_Shader](#ascii_shader)
+  - [Info](#info)
   - [Intro](#intro)
   - [Technique](#technique)
     - [Create a full screen quad](#create-a-full-screen-quad)
@@ -12,6 +13,12 @@
   - [What I learnd](#what-i-learnd)
   - [Future works](#future-works)
   - [Credits](#credits)
+
+## Info
+
+> - AUTHOR: Daniel Bologna (me)
+> - GIT: https://github.com/AbstractBorderStudio
+> - ENGINE: Godot 4.3
 
 ## Intro
 This shader is inspired by the ascii shader by Acerola [I Tried Turning Games Into Text](https://www.youtube.com/watch?v=gg40RWiaHRY)
@@ -141,6 +148,43 @@ The idea is to map each pixel in the screen inside an 8x8 square and use the lum
 
 ![schema](imgs/schema.png)
 
+The way I do this is:
+
+1. get the pixel location using `FRAGCOORD`
+2. get the relative position in a 8x8 pixel grid:
+ 
+    To do this, use the modulo operator (%) for the x and y pixel coordinate dividing it by 8.
+
+    ```
+    vec2 _map_pixel_coord(vec2 fragcoord, float pixel_size)
+    {
+        // clamp pixel coordinate inside a (pixel_size x pixel_size) square
+        return vec2(
+                float(int(fragcoord.x) % int(pixel_size)), 
+                float(int(fragcoord.y) % int(pixel_size)));
+    }
+    ```
+
+    This code take the (x,y) position of the current pixel, and return a value between 0 and 7 for each axis. This allow us to move inside the correct asci character position.
+3. use the pixel position and the luminance computed earlier to get the correct pixel value from the ascii texture.
+   
+    ```
+    float _get_ascii(float index, vec2 coordinate, vec2 uv)
+    {
+        // get the single pixel scale relative to the [0, 1] uv range.
+        float x_scale = 1.0 / (_char_count * _char_size);
+        float y_scale = 1.0 / _char_size;
+        
+        // get the coordinate of the (x, y) pixel of the texture and scale the pixel fullscreen to get the color
+        vec2 scaled_uv = uv / (vec2(_char_count, 1.0) * _char_size) 		// scale the uv so we have a single pixel from the texture
+                + vec2(x_scale * _char_size * index, 0.0) 					// displace by moving 8 pixel at a time to reach the correct character
+                + vec2(x_scale * coordinate.x, y_scale * coordinate.y); 	// get the (x,y) displaced position of the character
+        
+        // return the ascii texture sampled in this new uv
+        return texture(_ascii_tex, scaled_uv).r;
+    }
+    ```
+
 ### Add color
 
 ## What I learnd
@@ -148,3 +192,9 @@ The idea is to map each pixel in the screen inside an 8x8 square and use the lum
 ## Future works
 
 ## Credits
+
+- [I Tried Turning Games Into Text](https://www.youtube.com/watch?v=gg40RWiaHRY)
+- [Advanced post-processing](https://docs.godotengine.org/en/stable/tutorials/shaders/advanced_postprocessing.html)
+- [Introducing Reverse Z (AKA I'm sorry for breaking your shader)](https://godotengine.org/article/introducing-reverse-z/)
+- [About YUV Video](https://learn.microsoft.com/en-us/windows/win32/medfound/about-yuv-video)
+- [Acerola's public repo](https://github.com/GarrettGunnell/AcerolaFX/tree/main/Textures)
