@@ -1,0 +1,76 @@
+[gd_scene load_steps=14 format=3 uid="uid://bp6gause256ss"]
+
+[ext_resource type="ArrayMesh" uid="uid://brqn6uhnhu6ck" path="res://Assets/rubber_duck.obj" id="1_nujw2"]
+[ext_resource type="Shader" path="res://Shaders/ascii_shader.gdshader" id="3_e182i"]
+[ext_resource type="Texture2D" uid="uid://dtkg3dclgemie" path="res://Assets/Texture/edgesASCII.png" id="3_nov47"]
+[ext_resource type="Texture2D" uid="uid://bf5lyk18i4i6k" path="res://Assets/Texture/fillASCII.png" id="4_r3plh"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shi7a"]
+albedo_color = Color(1, 1, 0.243137, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2ouw2"]
+albedo_color = Color(0.957808, 0.315578, 1.92523e-07, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0gtnw"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vcny6"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w3v3a"]
+albedo_color = Color(1, 0.61274, 0.955992, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_jhvmh"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hbgyi"]
+render_priority = 0
+shader = ExtResource("3_e182i")
+shader_parameter/_char_size = 8.0
+shader_parameter/_char_count = 10.0
+shader_parameter/_ascii_tex = ExtResource("4_r3plh")
+shader_parameter/_ascii_edge_tex = ExtResource("3_nov47")
+
+[sub_resource type="QuadMesh" id="QuadMesh_siklj"]
+flip_faces = true
+size = Vector2(2, 2)
+
+[sub_resource type="Environment" id="Environment_bos2v"]
+
+[node name="Sample" type="Node3D"]
+
+[node name="Env" type="Node3D" parent="."]
+metadata/_edit_group_ = true
+
+[node name="RubberDuck" type="MeshInstance3D" parent="Env"]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.333394, 0)
+mesh = ExtResource("1_nujw2")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_shi7a")
+surface_material_override/1 = SubResource("StandardMaterial3D_2ouw2")
+surface_material_override/2 = SubResource("StandardMaterial3D_0gtnw")
+surface_material_override/3 = SubResource("StandardMaterial3D_vcny6")
+
+[node name="Ground" type="MeshInstance3D" parent="Env"]
+transform = Transform3D(1, 0, 0, 0, 1, 1.06581e-14, 0, -1.06581e-14, 1, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_w3v3a")
+mesh = SubResource("PlaneMesh_jhvmh")
+skeleton = NodePath("../..")
+
+[node name="Lights" type="Node3D" parent="."]
+metadata/_edit_group_ = true
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.79509, 0.924232, 0.821729)
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.729182, 0.924232, 0.821729)
+
+[node name="PostProcessPasses" type="Node3D" parent="."]
+metadata/_edit_group_ = true
+
+[node name="SS_PostProcess" type="MeshInstance3D" parent="PostProcessPasses"]
+material_override = SubResource("ShaderMaterial_hbgyi")
+mesh = SubResource("QuadMesh_siklj")
+skeleton = NodePath("../..")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_bos2v")

@@ -1,0 +1,95 @@
+[gd_scene load_steps=18 format=3 uid="uid://bqrl1tgmw0may"]
+
+[ext_resource type="ArrayMesh" uid="uid://brqn6uhnhu6ck" path="res://Assets/rubber_duck.obj" id="1_8ggqs"]
+[ext_resource type="Shader" path="res://Shaders/ascii_shader.gdshader" id="2_76bji"]
+[ext_resource type="Texture2D" uid="uid://dtkg3dclgemie" path="res://Assets/Texture/edgesASCII.png" id="3_5uxoe"]
+[ext_resource type="Texture2D" uid="uid://bf5lyk18i4i6k" path="res://Assets/Texture/fillASCII.png" id="4_ywexs"]
+[ext_resource type="ArrayMesh" uid="uid://dxikqiartj47p" path="res://Assets/sample_room.obj" id="5_bqaie"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_shi7a"]
+albedo_color = Color(1, 1, 0.243137, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2ouw2"]
+albedo_color = Color(0.957808, 0.315578, 1.92523e-07, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0gtnw"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vcny6"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4qt1w"]
+albedo_color = Color(0.667621, 0, 0.277204, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_q16bk"]
+albedo_color = Color(0.331008, 0.380728, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ujf0j"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xw10j"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ctcga"]
+albedo_color = Color(1, 1, 0, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hbgyi"]
+render_priority = 0
+shader = ExtResource("2_76bji")
+shader_parameter/_char_size = 8.0
+shader_parameter/_char_count = 10.0
+shader_parameter/_ascii_tex = ExtResource("4_ywexs")
+shader_parameter/_ascii_edge_tex = ExtResource("3_5uxoe")
+
+[sub_resource type="QuadMesh" id="QuadMesh_siklj"]
+flip_faces = true
+size = Vector2(2, 2)
+
+[sub_resource type="Environment" id="Environment_bos2v"]
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.0
+
+[node name="Sample" type="Node3D"]
+
+[node name="Env" type="Node3D" parent="."]
+metadata/_edit_group_ = true
+
+[node name="RubberDuck" type="MeshInstance3D" parent="Env"]
+transform = Transform3D(0.298736, 0, -0.400945, 0, 0.5, 0, 0.400945, 0, 0.298736, 1.60782, 0.988814, -2.4175)
+mesh = ExtResource("1_8ggqs")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_shi7a")
+surface_material_override/1 = SubResource("StandardMaterial3D_2ouw2")
+surface_material_override/2 = SubResource("StandardMaterial3D_0gtnw")
+surface_material_override/3 = SubResource("StandardMaterial3D_vcny6")
+
+[node name="SampleRoom" type="MeshInstance3D" parent="Env"]
+mesh = ExtResource("5_bqaie")
+skeleton = NodePath("../..")
+surface_material_override/1 = SubResource("StandardMaterial3D_4qt1w")
+surface_material_override/2 = SubResource("StandardMaterial3D_q16bk")
+surface_material_override/3 = SubResource("StandardMaterial3D_ujf0j")
+surface_material_override/4 = SubResource("StandardMaterial3D_4qt1w")
+surface_material_override/5 = SubResource("StandardMaterial3D_xw10j")
+surface_material_override/6 = SubResource("StandardMaterial3D_ctcga")
+
+[node name="Lights" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+metadata/_edit_group_ = true
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 3, 0)
+light_energy = 13.444
+spot_range = 7.28079
+spot_angle = 89.99
+
+[node name="PostProcessPasses" type="Node3D" parent="."]
+metadata/_edit_group_ = true
+
+[node name="SS_PostProcess" type="MeshInstance3D" parent="PostProcessPasses"]
+material_override = SubResource("ShaderMaterial_hbgyi")
+extra_cull_margin = 16384.0
+mesh = SubResource("QuadMesh_siklj")
+skeleton = NodePath("../..")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_bos2v")
