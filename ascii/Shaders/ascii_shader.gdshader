@@ -22,8 +22,8 @@ float _compute_luminosity(vec3 tex)
 float _quantize(float value, float size)
 {
 	// value is a [0, 1] range
-	// quantize the value as an integer between [0, size - 1]
-	return clamp(floor(value * size), 0.0, size - 1.0);
+	// quantize the value as an integer between [0, 1] with a step of 1 / size
+	return clamp(floor(value * size), 0.0, 1.0);
 }
 
 vec2 _map_pixel_coord(vec2 fragcoord, float pixel_size)
@@ -84,5 +84,5 @@ void fragment()
 	
 	// add color
 	vec3 col = tex * ascii;
-	ALBEDO = tex;//col;
+	ALBEDO = vec3(lm);//col;
 }

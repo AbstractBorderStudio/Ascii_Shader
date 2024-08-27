@@ -6,6 +6,7 @@
     - [Create a full screen quad](#create-a-full-screen-quad)
     - [Make each screen's pixel 8x8](#make-each-screens-pixel-8x8)
     - [Compute pixel luminosity](#compute-pixel-luminosity)
+    - [Quantize the luminosity values to the ascii character count](#quantize-the-luminosity-values-to-the-ascii-character-count)
     - [Map pixel to character](#map-pixel-to-character)
     - [Add color](#add-color)
   - [What I learnd](#what-i-learnd)
@@ -70,10 +71,61 @@ In Godot 4.3
 
 ![downsample](imgs/downsample.png)
 
-Ora 
-
+Now the screen should be made of 8x8 pixels, indipendenlty of the screen res.
 
 ### Compute pixel luminosity
+
+Compute the pixel luminosity using the YUV formula ([About YUV Video](https://learn.microsoft.com/en-us/windows/win32/medfound/about-yuv-video)):
+
+```
+float _compute_luminosity(vec3 tex)
+{
+	return 0.2126 * tex.r + 0.7152 * tex.g + 0.0722 * tex.b; // [0, 1]
+}
+```
+
+> As you can see the luminosity is a single channel value. In order to display it you should use something like:
+
+```
+ALBEDO = vec3(luminosity);
+```
+
+![lum](imgs/lum.png)
+
+### Quantize the luminosity values to the ascii character count
+
+Now we need to make the shades of gray of the luminosity fall in a range of fixed values eaquale to the number of character we want to use.
+
+To do so we can multiply the range by the count of character, then flooring the result to delete all in-between values and then dividing by 8.
+
+```
+float _quantize(float value, float size)
+{
+	// value is a [0, 1] range
+	// quantize the value as an integer between [0, 1] with a step of 1 / size
+	return clamp(floor(value * size) / size, 0.0, 1.0);
+}
+```
+
+In this way we have values between 0 and 1 with a step of 1/char_count. For instance, I use 10 ascii character so I'll have values like:
+
+[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+
+![quantize](imgs/quantize.png)
+
+We have 8 shades!
+
+> ⚠️ WARNING ⚠️ 
+>
+> Because of my naive implementation I forgot to divide by the size, so my values go from 0 to 9
+> 
+> [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+>
+> and the result looks burnt but **the information is still there**:
+>
+> ![quantize_burnt](imgs/quantize_burnt.png)
+>
+> I will leave it like this.
 
 ### Map pixel to character
 
