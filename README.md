@@ -238,4 +238,4 @@ Thank you for spending your time reading this article!
 - [Advanced post-processing](https://docs.godotengine.org/en/stable/tutorials/shaders/advanced_postprocessing.html)
 - [Introducing Reverse Z (AKA I'm sorry for breaking your shader)](https://godotengine.org/article/introducing-reverse-z/)
 - [About YUV Video](https://learn.microsoft.com/en-us/windows/win32/medfound/about-yuv-video)
-- [Acerola's public repo](https://github.com/GarrettGunnell/AcerolaFX/tree/main/Textures)
+- [AcerolaFX repo](https://github.com/GarrettGunnell/AcerolaFX/tree/main)
