@@ -20,6 +20,7 @@
 
 > - AUTHOR: Daniel Bologna (me)
 > - GIT: https://github.com/AbstractBorderStudio
+> - ITCH: https://abstractborderstudio.itch.io/ascii-shader
 > - GODOT_SHADER: https://godotshaders.com/author/dan/
 > - ENGINE: Godot 4.3
 
