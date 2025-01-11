@@ -39,11 +39,11 @@ Follow the [Advanced post-processing](https://docs.godotengine.org/en/stable/tut
 
 - Create a `MeshInstance3D`
 - set it as a quad size 2x2 and flip the face
-  - warining NOT the transform but the _quad size_.
+  - WARNING: Not the transform but the _quad size_.
 
 ![setting](imgs/setting.png)
 
-- Add a `ShaderMaterial` in Geometry>MaterialOverride
+- Add a `ShaderMaterial` in Geometry > Material Override
 
 in the vertex shader just add this line:
 
@@ -64,7 +64,7 @@ After doing this your screen should be all white-ish.
 
 ![start](imgs/start.png)
 
-Now, I'm using a 8x8 pixel ascii character like in the Acerola's video, so I need to make the screen pixel 8x8. This means taking the screen texture, enlarging it 8 times, flooring the value to delete all in-between values, and then donwscaling back to normal.
+Now, I'm using a 8x8 pixel ascii character like in the Acerola's video, so I need to make the screen pixel 8x8. This means taking the screen texture, enlarging it 8 times, flooring the value to delete all in-between values, and then downscaling back to normal.
 
 I did this transformation to the `SCREEN_UV`, than sample the screen texture on this downsampled uv.
 
@@ -77,12 +77,12 @@ vec2 down_sampled_uv = vec2(
 In Godot 4.3
 
 - screen_size: `VIEWPORT_SIZE`
-- pixel_size: `8.0` <- è la dimensione del carattere ascii
+- pixel_size: `8.0` <- This is the size of the ascii characters in our source image.
 
 
 ![downsample](imgs/downsample.png)
 
-Now the screen should be made of 8x8 pixels, indipendenlty of the screen res.
+Now the screen should be made of 8x8 pixels, independently of the screen resolution.
 
 ### Compute pixel luminosity
 
@@ -107,7 +107,7 @@ ALBEDO = vec3(luminosity);
 
 Now we need to make the shades of gray of the luminosity fall in a range of fixed values eaquale to the number of character we want to use.
 
-To do so we can multiply the range by the count of character, then flooring the result to delete all in-between values and then dividing by 8.
+To do so we can multiply the range by the number of characters, floor the result to delete all in-between values, and then divide by 8.
 
 ```
 float _quantize(float value, float size)
@@ -117,8 +117,9 @@ float _quantize(float value, float size)
 	return clamp(floor(value * size) / size, 0.0, 1.0);
 }
 ```
+> ^ [*] This formula isn't correct. See the note with the corresponding asterisk farther down.
 
-In this way we have values between 0 and 1 with a step of 1/char_count. For instance, I use 10 ascii character so I'll have values like:
+In this way we have values between 0 and 1 with a step of 1/char_count. For instance, if I use 10 ascii characters, I'll have values like:
 
 [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 
@@ -126,7 +127,7 @@ In this way we have values between 0 and 1 with a step of 1/char_count. For inst
 
 We have 8 shades!
 
-> ⚠️ WARNING ⚠️ 
+> [*]⚠️ WARNING ⚠️ 
 >
 > Because of my naive implementation I forgot to divide by the size, so my values go from 0 to 9
 > 
@@ -142,7 +143,7 @@ We have 8 shades!
 
 ### Map pixel to character
 
-Now. How the Duck (sorry I'm stupid) we make a pixel like an ascii character? The answer is to use a texture of the characters! So an 80x8 texture:
+Now. How the Duck (sorry I'm stupid) do we make a pixel into an ascii character? The answer is to use a texture of the characters! So an 80x8 texture:
 
 ![ascii_texture](imgs/ascii.png)
 
@@ -154,8 +155,8 @@ The idea is to map each pixel in the screen inside an 8x8 square and use the lum
 
 The way I do this is:
 
-1. get the pixel location using `FRAGCOORD`
-2. get the relative position in a 8x8 pixel grid:
+1. Get the pixel location using `FRAGCOORD`
+2. Get the relative position in a 8x8 pixel grid:
  
     To do this, use the modulo operator (%) for the x and y pixel coordinate dividing it by 8.
 
@@ -170,7 +171,7 @@ The way I do this is:
     ```
 
     This code take the (x,y) position of the current pixel, and return a value between 0 and 7 for each axis. This allow us to move inside the correct asci character position.
-3. use the pixel position and the luminance computed earlier to get the correct pixel value from the ascii texture.
+3. Use the pixel position and the luminance computed earlier to get the correct pixel value from the ascii texture.
    
     ```
     float _get_ascii(float index, vec2 coordinate, vec2 uv)
@@ -189,7 +190,7 @@ The way I do this is:
     }
     ```
 
-    To more specific, I make so that a single pixel of the ascii texture fill the screen (so I get only that color), then translate the uv to get the corresponding (x,y) pixel value. 
+    To more specific, I make it so that a single pixel of the ascii texture fill the screen (so I get only that color), then translate the uv to get the corresponding (x,y) pixel value. 
 
 ### Limit color values
 
@@ -209,6 +210,9 @@ ALBEDO = vec3(ascii);
 ```
 
 ![mono](imgs/mono.png)
+
+> Don't forget to set your Shader Parameters, especially the texture for the ASCII characters!
+
 
 ### Add color
 
